@@ -196,10 +196,6 @@ Understanding forwarding helped me appreciate how modern processors achieve high
 
 After implementing all major subsystems, the processor was evaluated as a complete execution engine.
 
-### Execution Log
-
-![Execution Log](./images05/log_output.png)
-
 ### What I Observed
 
 The processor successfully performed:
