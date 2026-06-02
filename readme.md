@@ -68,27 +68,25 @@ The workshop follows a progressive learning approach, starting from software exe
 
 ### Learning Progression
 
-```text
-Day 01 → Understanding Software Execution
+| Stage | Learning Focus |
+|---------|----------------|
+| Day 01 | Understanding Software Execution |
+| Day 02 | Verification & Debugging |
+| Day 03 | Digital Logic Design |
+| Day 04 | Building a RISC-V Processor |
+| Day 05 | Completing & Verifying a Pipelined CPU |
 
-Day 02 → Verification & Debugging
-
-Day 03 → Digital Logic Design
-
-Day 04 → Building a RISC-V Processor
-
-Day 05 → Completing & Verifying a Pipelined CPU
 ---
 
 ## My Learning Journey
 
 Before joining this workshop, I had a basic understanding of digital electronics, Verilog, and computer architecture concepts from my academic coursework. However, I had never explored processor design in a structured and practical manner.
 
-The RISC-V based MYTH Program provided an opportunity to understand how software and hardware interact within a processor. The journey began with learning the fundamentals of the RISC-V Instruction Set Architecture (ISA), assembly programming, GNU toolchain usage, and Application Binary Interface (ABI) concepts. These topics helped me understand how programs are executed at the processor level.
+The RISC-V based MYTH Program provided an opportunity to understand how software and hardware interact within a processor. The journey began with learning the fundamentals of the RISC-V Instruction Set Architecture (ISA), assembly programming, GNU toolchain usage, and Application Binary Interface (ABI) concepts.
 
 As the workshop progressed, I was introduced to TL-Verilog and Makerchip, where I learned to design and simulate digital logic using a timing-abstract methodology. Concepts such as combinational logic, sequential logic, pipelining, validity, and hierarchy helped me develop a stronger understanding of digital design principles.
 
-The most exciting phase of the workshop was building a RISC-V CPU step by step. Starting from instruction fetch and decode, I gradually implemented register file operations, ALU functionality, control logic, branching mechanisms, pipeline stages, and memory operations. Each stage of development helped me understand how individual components work together to form a complete processor.
+The most exciting phase of the workshop was building a RISC-V CPU step by step. Starting from instruction fetch and decode, I gradually implemented register file operations, ALU functionality, control logic, branching mechanisms, pipeline stages, and memory operations.
 
 Alongside implementation, the workshop also strengthened my debugging and verification skills. Analyzing simulation results, interpreting waveforms, tracing signals, and resolving implementation issues taught me the importance of systematic problem-solving in digital design.
 
@@ -156,26 +154,64 @@ The processor supports:
 
 This project represents the culmination of the entire workshop journey and demonstrates the transition from understanding software execution to implementing a verified processor architecture.
 
+---
+
 ## Debugging Diary
 
-One of the most valuable aspects of this workshop was the opportunity to debug and verify the processor during development. While implementing the various components of the CPU, I encountered several challenges that required careful analysis, signal tracing, and verification.
+One of the most valuable aspects of this workshop was the opportunity to debug and verify the processor during development.
 
-Throughout the development process, I learned that successful processor design is not only about writing logic but also about understanding how data moves through different stages of the pipeline and how various components interact with each other.
+Some of the major challenges encountered during implementation included:
 
-Some of the challenges encountered during implementation included:
+- Pipeline stage dependency issues
+- Control flow and branch-related behavior
+- Verification of valid signal propagation
+- Load and store operation debugging
+- Simulation timeout and maximum cycle issues
+- Waveform analysis and signal tracing
 
-* Pipeline stage dependency issues
-* Control flow and branch-related behavior
-* Verification of valid signal propagation
-* Load and store operation debugging
-* Simulation timeout and maximum cycle issues
-* Waveform analysis and signal tracing
-
-To investigate these issues, I relied on simulation logs, waveform inspection, register-level verification, and step-by-step analysis of processor behavior. Rather than modifying multiple sections of the design simultaneously, I learned the importance of isolating individual subsystems and verifying them independently.
+To investigate these issues, I relied on simulation logs, waveform inspection, register-level verification, and step-by-step analysis of processor behavior.
 
 This debugging process significantly improved my understanding of processor architecture, pipeline execution, verification methodology, and systematic problem-solving techniques used in digital design workflows.
 
-One of the key takeaways from this experience was that debugging often provides deeper insights than implementation itself. Every issue investigated during the workshop helped strengthen my understanding of how a processor operates internally and how design decisions affect overall functionality.
+---
+
+## Skills Developed Through This Workshop
+
+### Processor Architecture
+
+- RISC-V ISA
+- CPU Datapath Design
+- Instruction Execution Flow
+- Fetch / Decode / Execute Stages
+
+### Digital Design
+
+- Combinational Logic
+- Sequential Logic
+- Pipelining
+- Timing Analysis
+- Validity Concepts
+
+### RTL Design
+
+- TL-Verilog
+- Makerchip Platform
+- Modular Hardware Design
+- Register Transfer Level Design
+
+### Verification
+
+- Simulation Analysis
+- Waveform Debugging
+- Signal Tracing
+- Functional Verification
+
+### Engineering Practices
+
+- Documentation
+- Debugging Methodology
+- System-Level Thinking
+- Problem Solving
 
 ---
 
@@ -185,19 +221,17 @@ This workshop helped me bridge the gap between software concepts and hardware im
 
 Throughout the program, I gained practical exposure to:
 
-* RISC-V ISA Fundamentals
-* GNU Toolchain and ABI Concepts
-* TL-Verilog and Makerchip
-* Digital Logic Design
-* Processor Microarchitecture
-* Pipeline Design and Hazard Handling
-* Verification and Waveform Analysis
+- RISC-V ISA Fundamentals
+- GNU Toolchain and ABI Concepts
+- TL-Verilog and Makerchip
+- Digital Logic Design
+- Processor Microarchitecture
+- Pipeline Design and Hazard Handling
+- Verification and Waveform Analysis
 
 As the final outcome of this journey, I successfully designed, verified, and documented a pipelined RISC-V CPU using TL-Verilog and Makerchip.
 
 Beyond the technical concepts, this experience strengthened my problem-solving, debugging, and documentation skills while providing a deeper understanding of modern processor design workflows.
-
----
 
 ## Acknowledgements
 
