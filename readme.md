@@ -205,6 +205,6 @@ I enjoy exploring how hardware systems are designed, implemented, and verified, 
 
 ### Connect With Me
 
-LinkedIn: [Your LinkedIn Profile]
+LinkedIn: [https://www.linkedin.com/in/vijay-kumar-b9a9bb271]
 
-GitHub: [Your GitHub Profile]
+GitHub: [https://github.com/vijay080604]
