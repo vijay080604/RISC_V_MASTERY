@@ -57,11 +57,10 @@ The final project was the implementation of a pipelined RISC-V processor using T
 
 ## Makerchip Sandbox
 
-**Project Name:** VK_RISCV_Pipelined_Core_v1
+**Project Name:** VJ_RISCV_Pipelined_Core_v1
 
 **Sandbox Link:** *(https://myth.makerchip.com/v140/ide/~068fohN7/p-0RghrL)*
 
-**Verification Status:** ✅ Simulation PASSED!!!
 
 ---
 
