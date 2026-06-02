@@ -122,8 +122,7 @@ gcc filename.c
 
 ### Output
 
-<img src="./images01/main.png" width="900">
-
+<img src="./images01/riscv_sum1ton.png" width="900">
 ---
 
 ## Compiling with the RISC-V Compiler
@@ -155,8 +154,8 @@ riscv64-unknown-elf-objdump -d filename.o | less
 This helped me understand how high-level C statements are converted into assembly instructions.
 
 ### Assembly Analysis
+<img src="./images01/main.png" width="900">
 
-<img src="./images01/riscv_sum1ton.png" width="900">
 
 ---
 
