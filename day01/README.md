@@ -131,7 +131,6 @@ gcc filename.c
 ### Screenshot
 ![Compilation and Execution](images01/main.png)
 ```
-
 ---
 
 ## Compiling with the RISC-V Compiler
