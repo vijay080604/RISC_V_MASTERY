@@ -180,7 +180,6 @@ The first experiment involved creating and analyzing a program that computes the
 
 ### Screenshot
 
-```markdown
 ![Sum 1 to N](images01/sum1ton.png)
 ```
 
@@ -201,7 +200,6 @@ The second experiment expanded the previous example to calculate the sum of numb
 
 ### Screenshot
 
-```markdown
 ![Sum 1 to 1000](images01/sum1to1000.png)
 ```
 
@@ -226,7 +224,6 @@ Studying this code helped me appreciate how even complex software applications a
 
 ### Screenshot
 
-```markdown
 ![Binary Neural Network Analysis](images01/riscv_sum1ton.png)
 ```
 
