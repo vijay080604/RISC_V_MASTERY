@@ -171,7 +171,9 @@ This allowed me to analyze the assembly instructions produced by the compiler an
 The first experiment involved creating and analyzing a program that computes the sum of numbers from 1 to N.
 
 ### Screenshot
-![Sum 1 to N](images01/sum1ton.png)
+
+![Sum 1 to N](### Screenshot
+<img src="./images01/sum1ton.png" width="800">)
 
 ### Key Observation
 
@@ -191,7 +193,6 @@ The second experiment expanded the previous example to calculate the sum of numb
 ### Screenshot
 
 ![Sum 1 to 1000](images01/sum1to1000.png)
-```
 
 ### Key Observation
 
