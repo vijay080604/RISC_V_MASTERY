@@ -2,118 +2,37 @@
 
 ## Overview
 
-The first day of the RISC-V based MYTH Program focused on understanding the relationship between software and hardware. Before designing a processor, it is important to understand how a program written in a high-level language is translated into instructions that a processor can execute.
+Day 01 focused on understanding what happens between writing a C program and executing it on a processor.
 
-Through theory sessions and hands-on experiments, I explored the RISC-V Instruction Set Architecture (ISA), GNU Toolchain, assembly code generation, and integer number representation.
+Before this session, I knew how to write programs, but I had never explored how those programs are translated into instructions that a processor can understand. Through hands-on experiments, I learned how compilation works, how assembly code is generated, and how numbers are represented internally by a processor.
 
 ---
 
-# Learning Journey Map
+## What I Explored
 
-Throughout Day 01, I explored the following questions:
+The main goal of Day 01 was to answer a simple question:
 
 ```text
-How does software communicate with hardware?
-                ↓
-What is the role of an ISA?
-                ↓
-How does a compiler translate C code?
-                ↓
-How can we inspect generated assembly?
-                ↓
-How does a processor represent numbers internally?
-                ↓
-Understanding the complete software-to-hardware flow
+How does a C program become something a processor can execute?
 ```
 
----
+To understand this, I explored:
 
-# How Does Software Communicate with Hardware?
+* RISC-V Instruction Set Architecture (ISA)
+* GNU Toolchain
+* Assembly Code Generation
+* Binary Number Representation
+* Signed and Unsigned Integers
 
-When we write a program in C, the processor cannot directly understand it.
-
-A processor understands only machine instructions represented using binary values.
-
-This led me to investigate the complete execution flow:
-
-```text
-C Program
-    ↓
-Compiler
-    ↓
-Assembly Code
-    ↓
-Assembler
-    ↓
-Machine Code
-    ↓
-Processor Execution
-    ↓
-Output
-```
-
-The bridge between software and hardware is called the Instruction Set Architecture (ISA).
-
-The workshop introduced RISC-V, an open-source ISA that defines:
-
-* Instructions
-* Registers
-* Memory operations
-* Data formats
-* Execution behavior
+By the end of the day, I had a much clearer understanding of how software and hardware are connected.
 
 ---
 
-# Why RISC-V?
+## Lab 1 – Compiling and Running a C Program
 
-Some key characteristics of RISC-V are:
+I started by creating and executing a simple C program.
 
-* Open-source architecture
-* Modular design
-* Extensible instruction set
-* Industry and academic adoption
-* No licensing restrictions
-
-Understanding RISC-V helped me appreciate how software instructions are standardized for processor execution.
-
----
-
-# How Did I Observe This Flow Practically?
-
-To understand the software development process, I used the GNU Toolchain.
-
-The toolchain provides utilities that convert source code into executable machine instructions.
-
-| Tool      | Purpose                           |
-| --------- | --------------------------------- |
-| GCC       | Compiles C programs               |
-| Assembler | Converts assembly to machine code |
-| Objdump   | Displays assembly instructions    |
-| Linker    | Generates executable files        |
-
----
-
-# Hands-on Investigation
-
-## Environment Setup
-
-### Installing Leafpad
-
-```bash
-sudo apt install leafpad
-```
-
-### Creating a C Program
-
-```bash
-leafpad filename.c &
-```
-
----
-
-## Compiling and Executing a Program
-
-The first experiment involved compiling and running a simple C program.
+### Commands Used
 
 ```bash
 gcc filename.c
@@ -123,205 +42,131 @@ gcc filename.c
 ### Output
 
 <img src="./images01/riscv_sum1ton.png" width="900">
+
+### What I Observed
+
+This was my first step in connecting software with processor execution.
+
+Although the program looked simple, it helped me realize that every high-level instruction eventually gets translated into machine instructions executed by the processor.
+
 ---
 
-## Compiling with the RISC-V Compiler
+## Lab 2 – Generating RISC-V Assembly
 
-To generate processor-specific instructions:
+Next, I used the RISC-V GNU Toolchain to generate assembly code from the same C program.
+
+### Commands Used
 
 ```bash
 riscv64-unknown-elf-gcc -O1 -mabi=lp64 -march=rv64i -o filename.o filename.c
 ```
 
-Checking the generated object file:
-
-```bash
-ls -ltr filename.o
-```
-
-This demonstrated how source code is translated into RISC-V compatible instructions.
-
----
-
-## Assembly Code Analysis
-
-To inspect generated assembly:
-
 ```bash
 riscv64-unknown-elf-objdump -d filename.o | less
 ```
 
-This helped me understand how high-level C statements are converted into assembly instructions.
+### Assembly Output
 
-### Assembly Analysis
 <img src="./images01/main.png" width="900">
 
+### What I Observed
+
+This was one of the most interesting parts of the day.
+
+I could now see how a simple C statement is translated into multiple assembly instructions.
+
+Instead of treating the compiler as a black box, I was able to observe the actual instructions that would eventually run on a RISC-V processor.
+
+This helped me understand the relationship between:
+
+```text
+C Program
+    ↓
+Assembly Code
+    ↓
+Machine Instructions
+    ↓
+Processor Execution
+```
 
 ---
 
-# Lab Experiments
+## Lab 3 – Sum of Numbers from 1 to N
 
-## Experiment 1 – Sum of Numbers from 1 to N
-
-The objective of this experiment was to understand program execution flow and observe how arithmetic operations are translated into processor instructions.
+To better understand loops and arithmetic operations, I analyzed a program that calculates the sum of numbers from 1 to N.
 
 ### Program Output
 
 <img src="./images01/sum1ton.png" width="900">
 
-### Key Observations
+### What I Observed
 
-* Understood loop execution
-* Observed arithmetic operations
-* Learned instruction generation flow
-* Connected software execution with hardware instructions
+While studying the generated assembly, I noticed how loops are implemented using branch instructions and register operations.
+
+This was my first practical exposure to how high-level constructs such as loops are represented at the instruction level.
 
 ---
 
-## Experiment 2 – Sum of Numbers from 1 to 1000
+## Lab 4 – Sum of Numbers from 1 to 1000
 
-This experiment extended the previous example by increasing the iteration count and analyzing the generated instructions.
+I then repeated the experiment with a larger iteration count.
 
 ### Program Output
 
 <img src="./images01/sum1to1000.png" width="900">
 
-### Key Observations
+### What I Observed
 
-* Observed compiler-generated instructions
-* Compared program execution behavior
-* Understood optimization concepts
-* Strengthened assembly analysis skills
+Even though the program logic remained the same, analyzing larger examples helped me become more comfortable reading assembly code and identifying execution patterns.
 
----
-
-# Binary Neural Network Program Analysis
-
-As an advanced example, I explored a Binary Neural Network implementation written in C.
-
-The program demonstrated:
-
-* Layer initialization
-* Training loops
-* Weight updates
-* Error calculations
-
-This exercise showed how even complex software applications eventually become processor-executable instructions.
+It also highlighted how processors repeatedly execute the same instructions while updating register values.
 
 ---
 
-# How Does a Processor Understand Numbers?
+## Understanding Integer Representation
 
-Processors operate using binary values rather than decimal numbers.
+Another important topic covered during Day 01 was number representation.
 
-This led me to explore how numbers are represented internally.
+I explored how processors store and interpret values internally using binary representation.
 
----
+Instead of focusing on mathematical definitions, I tried to understand why signed and unsigned numbers behave differently despite occupying the same number of bits.
 
-## Binary Representation
+### Key Understanding
 
-Computers store information using bits.
+For a 64-bit system:
 
 ```text
-Bit → 0 or 1
-8 Bits → 1 Byte
-32 Bits → 1 Word
-64 Bits → Double Word
+Unsigned Range
+0 to (2^64 - 1)
+
+Signed Range
+-2^63 to (2^63 - 1)
 ```
+
+This helped me understand why processors treat the Most Significant Bit (MSB) differently depending on the data type being used.
 
 ---
 
-## Most Significant Bit (MSB) and Least Significant Bit (LSB)
+## Key Takeaways
 
-Every binary number contains:
+By the end of Day 01, I was able to:
 
-* MSB (Most Significant Bit)
-* LSB (Least Significant Bit)
-
-The MSB plays a critical role in determining the sign of a number.
-
----
-
-## Unsigned Numbers
-
-For an n-bit representation:
-
-```text
-Total Values = 2ⁿ
-```
-
-For a 64-bit unsigned number:
-
-```text
-0 to (2⁶⁴ − 1)
-```
+* Understand how software reaches hardware.
+* Compile and execute C programs.
+* Generate and inspect RISC-V assembly code.
+* Explore the GNU Toolchain workflow.
+* Understand basic processor instruction execution.
+* Learn how signed and unsigned numbers are represented internally.
 
 ---
 
-## Signed Numbers and Two's Complement
+## My Reflection
 
-Processors use Two's Complement representation to represent negative values.
+The biggest takeaway from Day 01 was realizing that processors never execute C code directly.
 
-Rules:
+Everything ultimately becomes instructions, registers, and binary data.
 
-```text
-MSB = 0 → Positive Number
-MSB = 1 → Negative Number
-```
-
-To obtain a negative number:
-
-1. Invert all bits
-2. Add 1
-
----
-
-## Number Range in RV64
-
-Positive Range:
-
-```text
-0 to (2⁶³ − 1)
-```
-
-Negative Range:
-
-```text
-−2⁶³ to −1
-```
-
----
-
-# Key Takeaways
-
-* Understood the software-to-hardware execution flow.
-* Learned the role of the RISC-V ISA.
-* Explored the GNU Toolchain.
-* Generated and analyzed assembly instructions.
-* Studied binary and integer representations.
-* Built the foundation required for processor design and verification.
-
----
-
-# My Understanding After Day 01
-
-Before this session, I knew that processors execute programs but did not fully understand the intermediate steps involved.
-
-Day 01 helped me connect:
-
-```text
-Software
-    ↓
-Compiler
-    ↓
-Assembly
-    ↓
-Machine Code
-    ↓
-Processor Execution
-```
-
-This understanding forms the foundation for the remaining days of the workshop.
+Understanding this flow provided the foundation for the rest of the workshop, where the focus gradually shifted from writing software to understanding and building the hardware that executes it.
 
 ---
 
