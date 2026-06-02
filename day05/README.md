@@ -182,3 +182,1511 @@
    - Ensure proper selection of the PC for each jump type.
    - Handle the jump instruction by creating invalid cycles after execution, similar to previous operations.
    - Once implemented, test to confirm the correct jump behavior, ensuring the program counter updates as expected.
+# Part 2 – Implementing the Pipeline and Establishing Instruction Flow
+
+## Introduction
+
+In Part 1, I explored the motivation behind pipelining and understood why modern processors execute multiple instructions simultaneously instead of waiting for one instruction to completely finish before starting the next.
+
+However, understanding pipelining conceptually is very different from implementing it in hardware.
+
+The next challenge was:
+
+> How can instructions be introduced into the processor at regular intervals without causing incorrect execution?
+
+Before solving hazards, the processor first needed a reliable mechanism to control when instructions enter the pipeline.
+
+This section focuses on implementing the initial pipeline timing strategy and understanding how instruction validity is managed throughout execution.
+
+---
+
+# Revisiting the Original CPU Design
+
+The processor developed during Day 04 was functionally correct but intentionally conservative.
+
+Instructions were not allowed to overlap aggressively.
+
+The execution flow resembled:
+
+```text
+Instruction 1
+      ↓
+Completed
+
+Instruction 2
+      ↓
+Completed
+
+Instruction 3
+      ↓
+Completed
+```
+
+This approach ensured correctness but sacrificed performance.
+
+A more efficient solution was required.
+
+---
+
+# Introducing a Three-Cycle Pipeline Cadence
+
+Before attempting a fully optimized pipeline, the processor was first organized around a predictable execution rhythm.
+
+The design adopted a:
+
+```text
+Three-Cycle Cadence
+```
+
+This means a new valid instruction enters the pipeline every three clock cycles.
+
+Conceptually:
+
+```text
+Cycle 1  → Instruction A
+
+Cycle 2  → Internal Processing
+
+Cycle 3  → Internal Processing
+
+Cycle 4  → Instruction B
+
+Cycle 5  → Internal Processing
+
+Cycle 6  → Internal Processing
+
+Cycle 7  → Instruction C
+```
+
+Although this is not yet maximum performance, it provides a stable foundation for later optimization.
+
+---
+
+# Why Start with a Three-Cycle Cadence?
+
+A natural question arises:
+
+> Why not immediately execute one instruction every clock cycle?
+
+The answer lies in verification complexity.
+
+When developing a processor, it is important to establish correctness before introducing aggressive optimizations.
+
+The three-cycle cadence provides:
+
+### Controlled Instruction Flow
+
+Instructions are separated sufficiently to avoid immediate hazards.
+
+### Easier Debugging
+
+Signal behavior becomes easier to observe and verify.
+
+### Stable Validation Environment
+
+Each stage can be tested independently.
+
+### Incremental Development
+
+Pipeline hazards can be solved gradually rather than all at once.
+
+This engineering approach significantly reduces debugging effort.
+
+---
+
+# Understanding the Valid Signal
+
+One of the most important concepts introduced during this stage was the **Valid Signal**.
+
+The valid signal determines whether an instruction currently present in the pipeline should be considered active.
+
+Conceptually:
+
+```text
+Valid = 1
+```
+
+means:
+
+```text
+This instruction should execute.
+```
+
+while:
+
+```text
+Valid = 0
+```
+
+means:
+
+```text
+Ignore this instruction.
+```
+
+The valid signal acts as a traffic controller for the processor pipeline.
+
+---
+
+# Why the Valid Signal Is Necessary
+
+As processors become more sophisticated, not every instruction fetched should necessarily execute.
+
+Examples include:
+
+- Branch recovery
+- Load hazards
+- Pipeline flushing
+- Speculative execution recovery
+
+The valid signal provides a mechanism to selectively disable instructions when required.
+
+Even though the processor is still operating in a simple three-cycle cadence, introducing validity control early simplifies future hazard handling. :contentReference[oaicite:0]{index=0}
+
+---
+
+# Generating Pipeline Activity
+
+To establish a predictable instruction pattern, a start signal was used after reset.
+
+The purpose of this logic was:
+
+1. Wait until reset completes.
+2. Inject the first valid instruction.
+3. Maintain the execution rhythm.
+
+Conceptually:
+
+```text
+Reset Released
+        ↓
+Start Signal Generated
+        ↓
+Valid Instruction Inserted
+        ↓
+Pipeline Begins Operating
+```
+
+This marks the beginning of instruction flow through the processor.
+
+---
+
+# Understanding Pipeline Timing
+
+One of the key lessons from this section was realizing that processor design is heavily dependent on timing.
+
+It is not enough for logic to be correct.
+
+Logic must also become available at the correct cycle.
+
+For example:
+
+```text
+Instruction Fetch
+        ↓
+Decode
+        ↓
+Register Read
+        ↓
+Execute
+```
+
+Each stage requires information generated by previous stages.
+
+Incorrect timing causes:
+
+- Invalid results
+- Register corruption
+- Branch failures
+- Incorrect instruction execution
+
+This makes timing analysis a critical part of processor development.
+
+---
+
+# Practical Investigation
+
+To verify pipeline behavior, I observed the execution timeline and monitored how instructions progressed through the processor.
+
+The objective was to ensure:
+
+- Instructions entered the pipeline correctly.
+- Stage transitions occurred as expected.
+- ALU updates happened at the correct time.
+- No unintended instruction interactions occurred.
+
+---
+
+## Practical Evidence
+
+![Pipeline Timing Verification](./images05/until_alu_update.png)
+
+---
+
+## Analysis
+
+The waveform demonstrates the progression of instructions through the processor pipeline.
+
+Several observations can be made:
+
+### Controlled Instruction Entry
+
+Instructions enter the pipeline in a predictable pattern.
+
+### Stage Synchronization
+
+Each stage receives valid information at the appropriate cycle.
+
+### Correct ALU Activation
+
+The ALU performs computations only after operands become available.
+
+### Stable Timing Behavior
+
+Signal transitions occur in a deterministic manner.
+
+These observations confirm that the basic pipeline timing structure is functioning correctly.
+
+---
+
+# Engineering Observation
+
+Before studying processor design, I often assumed that hardware execution occurred instantaneously.
+
+This investigation revealed a much more interesting reality.
+
+Every operation inside a processor is governed by timing relationships.
+
+Even a simple addition requires:
+
+```text
+Instruction Fetch
+        ↓
+Decode
+        ↓
+Operand Retrieval
+        ↓
+Execution
+        ↓
+Write Back
+```
+
+Each step occupies a specific position within the pipeline.
+
+Understanding these relationships is essential for designing reliable hardware.
+
+---
+
+# Preparing for Hazard Resolution
+
+Although the three-cycle cadence avoids many immediate hazards, it is not the final goal.
+
+Modern processors strive to execute instructions much more aggressively.
+
+To achieve this, the processor must eventually support:
+
+```text
+Nearly One Instruction Per Cycle
+```
+
+However, this introduces new challenges:
+
+- Register dependencies
+- Branch dependencies
+- Load-use hazards
+
+The current pipeline framework provides the foundation needed to tackle these problems in subsequent sections. :contentReference[oaicite:1]{index=1}
+
+---
+
+# Key Learning
+
+Through this section, I learned:
+
+- Why pipelining requires careful timing control.
+- The purpose of a three-cycle execution cadence.
+- How valid signals manage instruction flow.
+- Why timing correctness is as important as functional correctness.
+- How instructions progress through pipeline stages.
+- How waveform analysis helps verify processor behavior.
+
+Most importantly, I learned that successful processor design depends on controlling not only what happens, but also when it happens.
+
+---
+
+# Part 2 Reflection
+
+This section transformed pipelining from a theoretical concept into an actual hardware implementation.
+
+The processor now possesses:
+
+```text
+Instruction Timing Control
+        ↓
+Pipeline Validity Control
+        ↓
+Stage Synchronization
+        ↓
+Verified Execution Flow
+```
+
+These capabilities establish the foundation required for the next major challenge:
+
+```text
+Pipeline Hazards
+        ↓
+Register Dependencies
+        ↓
+Branch Dependencies
+        ↓
+Hazard Resolution
+```
+
+which ultimately enables the processor to move toward higher-performance instruction execution.
+# Part 3 – Solving Pipeline Hazards and Improving Instruction Throughput
+
+## Introduction
+
+By this stage, the processor was capable of:
+
+- Fetching instructions
+- Decoding instructions
+- Executing arithmetic operations
+- Maintaining pipeline timing
+- Controlling instruction validity
+
+While the pipeline was functioning correctly, another challenge immediately became apparent.
+
+As instructions began flowing through the processor simultaneously, they started interacting with each other.
+
+This introduced a new class of problems known as:
+
+# Pipeline Hazards
+
+Pipeline hazards occur when instruction execution order creates conflicts that may lead to incorrect results.
+
+Understanding and solving these hazards is one of the most important aspects of modern processor design.
+
+A processor that ignores hazards may execute instructions quickly, but it will not execute them correctly.
+
+Therefore, the objective of this phase was:
+
+```text
+Improve Performance
+        ↓
+Maintain Correctness
+        ↓
+Resolve Hazards
+```
+
+---
+
+# Understanding Data Dependencies
+
+Consider the following sequence:
+
+```assembly
+add x5, x1, x2
+sub x6, x5, x3
+```
+
+At first glance, these instructions appear independent.
+
+However, a closer inspection reveals that the second instruction depends on the result generated by the first instruction.
+
+```text
+Instruction 1
+Produces x5
+        ↓
+Instruction 2
+Requires x5
+```
+
+This relationship is known as a dependency.
+
+Dependencies are extremely common in real software and therefore must be handled correctly by the processor.
+
+---
+
+# The Read-After-Write Hazard
+
+The most common hazard encountered in pipelined processors is the:
+
+```text
+Read After Write (RAW) Hazard
+```
+
+This occurs when:
+
+1. An instruction produces a result.
+2. A following instruction immediately requires that result.
+3. The value has not yet been written back.
+
+Example:
+
+```assembly
+add x5, x1, x2
+sub x6, x5, x3
+```
+
+The ADD instruction generates x5.
+
+The SUB instruction attempts to read x5.
+
+If the ADD operation has not completed, the SUB instruction may receive an incorrect value.
+
+This leads to incorrect program execution.
+
+---
+
+# Why This Hazard Occurs
+
+To understand the problem, consider the pipeline timeline.
+
+```text
+Cycle 1
+ADD Fetch
+
+Cycle 2
+ADD Decode
+SUB Fetch
+
+Cycle 3
+ADD Execute
+SUB Decode
+
+Cycle 4
+ADD Write Back
+SUB Execute
+```
+
+Notice that the SUB instruction may require the value before the ADD instruction has fully completed.
+
+The pipeline is operating correctly from a timing perspective, but data availability becomes the issue.
+
+This is one of the fundamental challenges introduced by pipelining.
+
+---
+
+# Traditional Solution: Pipeline Stalls
+
+One possible solution is to pause execution.
+
+The processor waits until the required value becomes available.
+
+Conceptually:
+
+```text
+Instruction A
+        ↓
+Wait
+        ↓
+Wait
+        ↓
+Instruction B
+```
+
+Although this approach guarantees correctness, it introduces a major disadvantage:
+
+```text
+Performance Loss
+```
+
+The processor spends valuable cycles doing no useful work.
+
+Modern processors therefore seek better solutions whenever possible.
+
+---
+
+# Understanding Register Bypassing
+
+To reduce unnecessary waiting, processors implement a technique known as:
+
+# Register Bypassing
+
+Also called:
+
+```text
+Forwarding
+```
+
+Instead of waiting for the result to be written back to the register file, the processor directly forwards the newly computed value to the instruction that requires it.
+
+Conceptually:
+
+```text
+ALU Result
+        ↓
+Forward Directly
+        ↓
+Next Instruction
+```
+
+This eliminates unnecessary stalls and significantly improves performance.
+
+---
+
+# Why Forwarding Improves Performance
+
+Without forwarding:
+
+```text
+ADD
+ ↓
+Write Back
+ ↓
+SUB Executes
+```
+
+With forwarding:
+
+```text
+ADD Executes
+ ↓
+Forward Result
+ ↓
+SUB Executes Immediately
+```
+
+The second instruction no longer needs to wait for the entire write-back process.
+
+This improves instruction throughput while maintaining correctness.
+
+---
+
+# Understanding Branch Hazards
+
+Data hazards are not the only challenge introduced by pipelining.
+
+Branch instructions create another category of hazards.
+
+Example:
+
+```assembly
+beq x1, x2, target
+```
+
+The processor does not immediately know whether the branch condition will be true or false.
+
+However, instruction fetching must continue.
+
+This creates uncertainty regarding the next instruction.
+
+```text
+Branch Instruction
+        ↓
+Decision Pending
+        ↓
+Unknown Next PC
+```
+
+This is known as a:
+
+```text
+Control Hazard
+```
+
+---
+
+# Why Branch Hazards Are Difficult
+
+A branch decision influences the Program Counter.
+
+The Program Counter determines:
+
+```text
+Which instruction should be fetched next?
+```
+
+If the processor guesses incorrectly, it may begin executing instructions that should never have executed.
+
+As a result:
+
+- Incorrect instructions enter the pipeline.
+- Processor resources are wasted.
+- Pipeline flushing may become necessary.
+
+Branch handling is therefore one of the most critical aspects of processor design.
+
+---
+
+# Engineering Investigation
+
+During this phase, I focused on understanding how instruction dependencies influence processor behavior.
+
+The objective was not simply to observe hazards, but to understand:
+
+```text
+Why Hazards Occur
+        ↓
+How They Affect Performance
+        ↓
+How Modern Processors Solve Them
+```
+
+This perspective transformed hazards from theoretical concepts into practical engineering challenges.
+
+---
+
+# Connecting Hazards to Processor Performance
+
+One important realization was that pipelining alone does not guarantee high performance.
+
+A poorly designed pipeline may spend significant time waiting for dependencies to resolve.
+
+Therefore:
+
+```text
+Pipeline
+        ↓
+Hazard Detection
+        ↓
+Hazard Resolution
+        ↓
+Performance Improvement
+```
+
+All three elements must work together.
+
+This explains why hazard management is considered a core component of processor architecture.
+
+---
+
+# Engineering Observation
+
+Before studying pipelined processors, I assumed that executing instructions simultaneously would automatically improve performance.
+
+This investigation revealed a more nuanced reality.
+
+Executing instructions in parallel introduces dependencies that must be carefully managed.
+
+The processor must constantly balance:
+
+```text
+Speed
+        vs
+Correctness
+```
+
+A successful processor design achieves both.
+
+---
+
+# Key Learning
+
+Through this section, I learned:
+
+- Why data dependencies occur.
+- The concept of Read-After-Write hazards.
+- Why pipeline stalls reduce performance.
+- How register bypassing improves throughput.
+- The challenges introduced by branch instructions.
+- The role of control hazards.
+- Why hazard management is essential for modern processors.
+
+Most importantly, I learned that processor performance is determined not only by execution speed, but also by how effectively dependencies are managed.
+
+---
+
+# Part 3 Reflection
+
+This section introduced the first major optimization challenges encountered in processor design.
+
+The journey can be summarized as:
+
+```text
+Pipeline Created
+        ↓
+Instruction Dependencies
+        ↓
+Data Hazards
+        ↓
+Control Hazards
+        ↓
+Forwarding Techniques
+        ↓
+Higher Performance
+```
+
+By understanding hazard behavior and the techniques used to resolve them, I gained deeper insight into how modern processors achieve both correctness and efficiency.
+
+This knowledge establishes the foundation for completing the processor implementation in the upcoming sections.
+# Part 3 – Solving Pipeline Hazards and Improving Instruction Throughput
+
+## Introduction
+
+By this stage, the processor was capable of:
+
+- Fetching instructions
+- Decoding instructions
+- Executing arithmetic operations
+- Maintaining pipeline timing
+- Controlling instruction validity
+
+While the pipeline was functioning correctly, another challenge immediately became apparent.
+
+As instructions began flowing through the processor simultaneously, they started interacting with each other.
+
+This introduced a new class of problems known as:
+
+# Pipeline Hazards
+
+Pipeline hazards occur when instruction execution order creates conflicts that may lead to incorrect results.
+
+Understanding and solving these hazards is one of the most important aspects of modern processor design.
+
+A processor that ignores hazards may execute instructions quickly, but it will not execute them correctly.
+
+Therefore, the objective of this phase was:
+
+```text
+Improve Performance
+        ↓
+Maintain Correctness
+        ↓
+Resolve Hazards
+```
+
+---
+
+# Understanding Data Dependencies
+
+Consider the following sequence:
+
+```assembly
+add x5, x1, x2
+sub x6, x5, x3
+```
+
+At first glance, these instructions appear independent.
+
+However, a closer inspection reveals that the second instruction depends on the result generated by the first instruction.
+
+```text
+Instruction 1
+Produces x5
+        ↓
+Instruction 2
+Requires x5
+```
+
+This relationship is known as a dependency.
+
+Dependencies are extremely common in real software and therefore must be handled correctly by the processor.
+
+---
+
+# The Read-After-Write Hazard
+
+The most common hazard encountered in pipelined processors is the:
+
+```text
+Read After Write (RAW) Hazard
+```
+
+This occurs when:
+
+1. An instruction produces a result.
+2. A following instruction immediately requires that result.
+3. The value has not yet been written back.
+
+Example:
+
+```assembly
+add x5, x1, x2
+sub x6, x5, x3
+```
+
+The ADD instruction generates x5.
+
+The SUB instruction attempts to read x5.
+
+If the ADD operation has not completed, the SUB instruction may receive an incorrect value.
+
+This leads to incorrect program execution.
+
+---
+
+# Why This Hazard Occurs
+
+To understand the problem, consider the pipeline timeline.
+
+```text
+Cycle 1
+ADD Fetch
+
+Cycle 2
+ADD Decode
+SUB Fetch
+
+Cycle 3
+ADD Execute
+SUB Decode
+
+Cycle 4
+ADD Write Back
+SUB Execute
+```
+
+Notice that the SUB instruction may require the value before the ADD instruction has fully completed.
+
+The pipeline is operating correctly from a timing perspective, but data availability becomes the issue.
+
+This is one of the fundamental challenges introduced by pipelining.
+
+---
+
+# Traditional Solution: Pipeline Stalls
+
+One possible solution is to pause execution.
+
+The processor waits until the required value becomes available.
+
+Conceptually:
+
+```text
+Instruction A
+        ↓
+Wait
+        ↓
+Wait
+        ↓
+Instruction B
+```
+
+Although this approach guarantees correctness, it introduces a major disadvantage:
+
+```text
+Performance Loss
+```
+
+The processor spends valuable cycles doing no useful work.
+
+Modern processors therefore seek better solutions whenever possible.
+
+---
+
+# Understanding Register Bypassing
+
+To reduce unnecessary waiting, processors implement a technique known as:
+
+# Register Bypassing
+
+Also called:
+
+```text
+Forwarding
+```
+
+Instead of waiting for the result to be written back to the register file, the processor directly forwards the newly computed value to the instruction that requires it.
+
+Conceptually:
+
+```text
+ALU Result
+        ↓
+Forward Directly
+        ↓
+Next Instruction
+```
+
+This eliminates unnecessary stalls and significantly improves performance.
+
+---
+
+# Why Forwarding Improves Performance
+
+Without forwarding:
+
+```text
+ADD
+ ↓
+Write Back
+ ↓
+SUB Executes
+```
+
+With forwarding:
+
+```text
+ADD Executes
+ ↓
+Forward Result
+ ↓
+SUB Executes Immediately
+```
+
+The second instruction no longer needs to wait for the entire write-back process.
+
+This improves instruction throughput while maintaining correctness.
+
+---
+
+# Understanding Branch Hazards
+
+Data hazards are not the only challenge introduced by pipelining.
+
+Branch instructions create another category of hazards.
+
+Example:
+
+```assembly
+beq x1, x2, target
+```
+
+The processor does not immediately know whether the branch condition will be true or false.
+
+However, instruction fetching must continue.
+
+This creates uncertainty regarding the next instruction.
+
+```text
+Branch Instruction
+        ↓
+Decision Pending
+        ↓
+Unknown Next PC
+```
+
+This is known as a:
+
+```text
+Control Hazard
+```
+
+---
+
+# Why Branch Hazards Are Difficult
+
+A branch decision influences the Program Counter.
+
+The Program Counter determines:
+
+```text
+Which instruction should be fetched next?
+```
+
+If the processor guesses incorrectly, it may begin executing instructions that should never have executed.
+
+As a result:
+
+- Incorrect instructions enter the pipeline.
+- Processor resources are wasted.
+- Pipeline flushing may become necessary.
+
+Branch handling is therefore one of the most critical aspects of processor design.
+
+---
+
+# Engineering Investigation
+
+During this phase, I focused on understanding how instruction dependencies influence processor behavior.
+
+The objective was not simply to observe hazards, but to understand:
+
+```text
+Why Hazards Occur
+        ↓
+How They Affect Performance
+        ↓
+How Modern Processors Solve Them
+```
+
+This perspective transformed hazards from theoretical concepts into practical engineering challenges.
+
+---
+
+# Connecting Hazards to Processor Performance
+
+One important realization was that pipelining alone does not guarantee high performance.
+
+A poorly designed pipeline may spend significant time waiting for dependencies to resolve.
+
+Therefore:
+
+```text
+Pipeline
+        ↓
+Hazard Detection
+        ↓
+Hazard Resolution
+        ↓
+Performance Improvement
+```
+
+All three elements must work together.
+
+This explains why hazard management is considered a core component of processor architecture.
+
+---
+
+# Engineering Observation
+
+Before studying pipelined processors, I assumed that executing instructions simultaneously would automatically improve performance.
+
+This investigation revealed a more nuanced reality.
+
+Executing instructions in parallel introduces dependencies that must be carefully managed.
+
+The processor must constantly balance:
+
+```text
+Speed
+        vs
+Correctness
+```
+
+A successful processor design achieves both.
+
+---
+
+# Key Learning
+
+Through this section, I learned:
+
+- Why data dependencies occur.
+- The concept of Read-After-Write hazards.
+- Why pipeline stalls reduce performance.
+- How register bypassing improves throughput.
+- The challenges introduced by branch instructions.
+- The role of control hazards.
+- Why hazard management is essential for modern processors.
+
+Most importantly, I learned that processor performance is determined not only by execution speed, but also by how effectively dependencies are managed.
+
+---
+
+# Part 3 Reflection
+
+This section introduced the first major optimization challenges encountered in processor design.
+
+The journey can be summarized as:
+
+```text
+Pipeline Created
+        ↓
+Instruction Dependencies
+        ↓
+Data Hazards
+        ↓
+Control Hazards
+        ↓
+Forwarding Techniques
+        ↓
+Higher Performance
+```
+
+By understanding hazard behavior and the techniques used to resolve them, I gained deeper insight into how modern processors achieve both correctness and efficiency.
+
+This knowledge establishes the foundation for completing the processor implementation in the upcoming sections.
+# Part 5 – Integrating the Complete RISC-V Core
+
+## Introduction
+
+By this stage of the workshop, the processor had evolved significantly from its initial implementation.
+
+Earlier sessions focused on individual architectural components such as:
+
+- Program Counter
+- Instruction Fetch
+- Instruction Decode
+- Register File
+- Arithmetic Logic Unit
+- Pipeline Logic
+- Hazard Management
+
+While each of these components had been verified independently, the ultimate objective was much larger:
+
+> Can all of these hardware blocks work together as a complete RISC-V processor?
+
+This section focused on integrating the major processor subsystems and validating the complete execution flow.
+
+For the first time, the processor could be evaluated as a unified computing system rather than a collection of independent modules.
+
+---
+
+# The Challenge of CPU Integration
+
+Designing individual hardware blocks is only one part of processor development.
+
+The more difficult challenge is ensuring that every component communicates correctly with the others.
+
+A successful processor requires coordination between:
+
+```text
+Instruction Fetch
+        ↓
+Instruction Decode
+        ↓
+Operand Retrieval
+        ↓
+Execution
+        ↓
+Result Generation
+        ↓
+Next Instruction
+```
+
+A failure in any stage can compromise the entire execution process.
+
+Therefore, integration testing becomes one of the most important phases of CPU development.
+
+---
+
+# Revisiting the Processor Datapath
+
+At this point, the complete processor datapath can be represented as:
+
+```text
+Program Counter
+        ↓
+Instruction Memory
+        ↓
+Instruction Fetch
+        ↓
+Instruction Decode
+        ↓
+Register File
+        ↓
+ALU
+        ↓
+Result Generation
+        ↓
+Write Back
+```
+
+This execution path represents the journey taken by every instruction executed by the processor.
+
+The goal of this phase was to verify that information flows correctly through every stage.
+
+---
+
+# Verifying End-to-End Execution
+
+One of the key objectives during integration was confirming that instructions successfully travel through the entire datapath without corruption.
+
+This involves verifying:
+
+### Correct Fetch Behavior
+
+Instructions must be retrieved from the correct memory locations.
+
+---
+
+### Correct Decode Behavior
+
+Instruction fields must be interpreted correctly.
+
+---
+
+### Correct Operand Access
+
+Registers must provide the intended values.
+
+---
+
+### Correct ALU Execution
+
+Arithmetic and logical operations must produce expected results.
+
+---
+
+### Correct Result Propagation
+
+Outputs must be delivered to subsequent stages correctly.
+
+Only when all of these conditions are satisfied can the processor be considered functional.
+
+---
+
+# Practical Evidence
+
+![Execution Log Output](./images05/log_output.png)
+
+---
+
+# Analysis
+
+The execution log provides a detailed view of processor activity during program execution.
+
+Several important observations can be made:
+
+### Instruction Progression
+
+Instructions move through the processor in the expected sequence.
+
+---
+
+### Consistent Execution Flow
+
+The processor continuously advances without unexpected interruptions.
+
+---
+
+### Correct Operation Selection
+
+Instructions activate the intended execution paths.
+
+---
+
+### Stable Behavior
+
+The execution trace demonstrates predictable and repeatable processor operation.
+
+These observations indicate that the major architectural components are interacting correctly.
+
+---
+
+# Understanding Processor Verification
+
+One of the most valuable lessons from this phase was recognizing that successful execution is not sufficient by itself.
+
+A processor must also be verified.
+
+Verification answers questions such as:
+
+```text
+Did the instruction execute correctly?
+
+Was the correct operand selected?
+
+Was the result generated properly?
+
+Was the result delivered correctly?
+```
+
+Without verification, implementation errors may remain undetected.
+
+This highlights why verification consumes a significant portion of industrial CPU development effort.
+
+---
+
+# Complete ALU Verification
+
+After integrating the execution pipeline, the next objective was validating ALU functionality under realistic operating conditions.
+
+Rather than testing isolated arithmetic operations, the ALU was evaluated as part of the complete processor execution flow.
+
+This provides much stronger confidence in processor correctness.
+
+---
+
+## Practical Evidence
+
+![Complete ALU Output](./images05/alu_overall_output.png)
+
+---
+
+## Analysis
+
+The output demonstrates successful interaction between:
+
+```text
+Decode Logic
+        ↓
+Register File
+        ↓
+ALU
+        ↓
+Result Generation
+```
+
+Several observations confirm correct behavior:
+
+- Arithmetic operations produce valid outputs.
+- Operand selection functions correctly.
+- Execution timing remains stable.
+- Results propagate through the processor as expected.
+
+These observations validate the computational core of the processor.
+
+---
+
+# Engineering Observation
+
+One of the most interesting realizations during this phase was that processor development is fundamentally a systems engineering problem.
+
+Individual modules may function perfectly in isolation.
+
+However, integration introduces entirely new challenges:
+
+- Timing interactions
+- Signal dependencies
+- Data movement
+- Control coordination
+
+Successful processor design therefore requires both component-level understanding and system-level thinking.
+
+---
+
+# Measuring Progress
+
+Comparing the processor at the beginning of the workshop versus its current state highlights the amount of progress achieved.
+
+### Early Stage
+
+```text
+Instruction Concepts
+```
+
+---
+
+### Intermediate Stage
+
+```text
+Digital Logic
+```
+
+---
+
+### Processor Construction
+
+```text
+Fetch
+Decode
+Execute
+```
+
+---
+
+### Current Stage
+
+```text
+Integrated RISC-V Core
+```
+
+This progression demonstrates how individual concepts gradually combine to form a functioning processor.
+
+---
+
+# Key Learning
+
+Through this section, I learned:
+
+- The importance of processor integration.
+- How execution stages cooperate.
+- Why end-to-end verification is critical.
+- How execution logs help validate functionality.
+- The role of ALU verification in CPU development.
+- The difference between module verification and system verification.
+
+Most importantly, I learned that a processor becomes truly useful only when all of its architectural components operate together correctly.
+
+---
+
+# Part 5 Reflection
+
+This phase marked the transition from:
+
+```text
+Individual Hardware Blocks
+            ↓
+Integrated Processor
+```
+
+The processor now possesses:
+
+```text
+Instruction Fetch
+        ↓
+Instruction Decode
+        ↓
+Register Access
+        ↓
+ALU Execution
+        ↓
+Result Generation
+        ↓
+Verified Operation
+```
+
+This establishes the foundation for the final stage of the workshop:
+
+```text
+Complete Verification
+        ↓
+Passing Validation Tests
+        ↓
+Final RISC-V Core
+```
+
+where the processor will be evaluated as a complete and functioning CPU implementation.
+# Simulation Pass Confirmation
+
+After implementing and integrating the major processor subsystems, the next step was to verify whether the design successfully passed the Makerchip simulation environment.
+
+Simulation serves as the final checkpoint before a processor can be considered functionally correct.
+
+A successful simulation confirms that:
+
+- The design compiles correctly.
+- The hardware description contains no fatal errors.
+- Pipeline stages interact correctly.
+- Control logic behaves as expected.
+- Verification checks pass successfully.
+
+Passing simulation provides confidence that the processor implementation is functioning according to its intended specification.
+
+---
+
+## Practical Evidence
+
+![Simulation Passed Log](./images05/simulation_passed_log.png)
+
+---
+
+## Analysis
+
+The simulation output confirms successful execution of the processor verification environment.
+
+Several observations can be made:
+
+### Successful Compilation
+
+The design was successfully compiled without critical errors.
+
+---
+
+### Hardware Generation
+
+The simulation environment generated the required processor structures and signals.
+
+---
+
+### Verification Execution
+
+The processor was subjected to validation checks throughout execution.
+
+---
+
+### Final Pass Condition
+
+The message:
+
+```text
+Simulation PASSED!!!
+```
+
+indicates that the processor successfully satisfied all required verification conditions.
+
+This serves as one of the strongest indicators that the implementation is functioning correctly.
+
+---
+
+### Engineering Significance
+
+In professional digital design workflows, a successful simulation pass represents a major milestone.
+
+Before hardware can be synthesized or deployed, engineers must demonstrate that the design behaves correctly under simulation.
+
+This screenshot therefore represents the transition from:
+
+```text
+Processor Design
+        ↓
+Processor Verification
+        ↓
+Verified Processor
+```
+
+and serves as a key validation artifact for the project.
