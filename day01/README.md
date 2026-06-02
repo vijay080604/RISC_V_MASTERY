@@ -128,14 +128,10 @@ gcc filename.c
 ./a.out
 ```
 
-### Screenshot
-![Compilation and Execution](images01/main.png)
-```
----
-
 ## Compiling with the RISC-V Compiler
 
 To understand how software is prepared for RISC-V processors, I compiled the program using the RISC-V GCC Toolchain.
+
 
 ```bash
 riscv64-unknown-elf-gcc -O1 -mabi=lp64 -march=rv64i -o filename.o filename.c
