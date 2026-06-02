@@ -171,9 +171,7 @@ This allowed me to analyze the assembly instructions produced by the compiler an
 The first experiment involved creating and analyzing a program that computes the sum of numbers from 1 to N.
 
 ### Screenshot
-
 ![Sum 1 to N](images01/sum1ton.png)
-```
 
 ### Key Observation
 
@@ -216,10 +214,7 @@ Studying this code helped me appreciate how even complex software applications a
 
 ### Screenshot
 
-![Binary Neural Network Analysis]
-(images01/riscv_sum1ton.png)
-
-
+![Binary Neural Network Analysis](images01/riscv_sum1ton.png)
 ---
 
 # How Does a Processor Understand Numbers?
