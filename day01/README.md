@@ -129,8 +129,6 @@ gcc filename.c
 ```
 
 ### Screenshot
-
-```markdown
 ![Compilation and Execution](images01/main.png)
 ```
 
@@ -166,7 +164,6 @@ This allowed me to analyze the assembly instructions produced by the compiler an
 
 ### Screenshot
 
-```markdown
 ![Assembly Analysis](images01/main.png)
 ```
 
@@ -224,8 +221,9 @@ Studying this code helped me appreciate how even complex software applications a
 
 ### Screenshot
 
-![Binary Neural Network Analysis](images01/riscv_sum1ton.png)
-```
+![Binary Neural Network Analysis]
+(images01/riscv_sum1ton.png)
+
 
 ---
 
