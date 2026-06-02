@@ -54,20 +54,30 @@ This repository reflects not only the final outcomes of the workshop but also th
 
 ## Learning Roadmap
 
-The workshop follows a progressive learning approach, starting from the fundamentals of RISC-V software development and gradually advancing toward the design and verification of a pipelined RISC-V CPU.
+The workshop follows a progressive learning approach, starting from software execution and gradually advancing toward the design and verification of a complete pipelined RISC-V processor.
 
-The following roadmap provides a structured overview of my learning journey throughout the program.
+| Day | Topics Covered | Documentation |
+|------|----------------|---------------|
+| Day 01 | RISC-V ISA, GNU Toolchain, Integer Number Representation | [Day 01 Documentation](./day01/README.md) |
+| Day 02 | ABI and Basic Verification Flow | [Day 02 Documentation](./day02/README.md) |
+| Day 03 | Digital Logic Design using TL-Verilog and Makerchip | [Day 03 Documentation](./day03/README.md) |
+| Day 04 | RISC-V CPU Microarchitecture, Fetch, Decode and Execute | [Day 04 Documentation](./day04/README.md) |
+| Day 05 | Pipelining, Hazard Handling and Complete CPU Design | [Day 05 Documentation](./day05/README.md) |
 
-| Day   | Topics Covered                                                              | Documentation |
-| ----- | --------------------------------------------------------------------------- | ------------- |
-| Day 1 | Introduction to RISC-V ISA, GNU Toolchain, Integer Number Representation    | Link          |
-| Day 2 | Application Binary Interface (ABI) and Basic Verification Flow              | Link          |
-| Day 3 | Digital Logic Design using TL-Verilog and Makerchip                         | Link          |
-| Day 4 | Basic RISC-V CPU Microarchitecture, Fetch, Decode and Control Logic         | Link          |
-| Day 5 | CPU Pipelining, Hazard Handling, Load/Store Operations and Final CPU Design | Link          |
+---
 
-By following the roadmap above, readers can explore the repository in the same sequence in which the concepts were learned and implemented throughout the workshop.
+### Learning Progression
 
+```text
+Day 01 → Understanding Software Execution
+
+Day 02 → Verification & Debugging
+
+Day 03 → Digital Logic Design
+
+Day 04 → Building a RISC-V Processor
+
+Day 05 → Completing & Verifying a Pipelined CPU
 ---
 
 ## My Learning Journey
@@ -88,46 +98,63 @@ By the end of the program, I had successfully designed, verified, and documented
 
 ## Final CPU Project Showcase
 
-The final outcome of this workshop was the design, implementation, verification, and documentation of a pipelined RISC-V CPU using TL-Verilog and Makerchip.
+The final outcome of this workshop was the successful implementation and verification of a pipelined RISC-V processor using TL-Verilog and Makerchip.
 
-This project brought together all the concepts covered throughout the workshop, including instruction execution, register file operations, ALU functionality, branching mechanisms, pipelining, hazard handling, and memory operations.
+This processor integrates:
 
-### Project Overview
+- Instruction Fetch
+- Instruction Decode
+- Register File
+- Arithmetic Logic Unit (ALU)
+- Control Logic
+- Branch Logic
+- Pipeline Stages
+- Hazard Handling
+- Load/Store Operations
+- Complete Verification Flow
 
-The processor was developed incrementally throughout the workshop, beginning with basic instruction execution and gradually evolving into a complete pipelined RISC-V CPU capable of handling arithmetic operations, control flow instructions, and memory access operations.
+---
 
-### CPU Architecture
+### Final RISC-V Core
 
-[Insert Final CPU Architecture Diagram]
+![Final RISC-V Core](./day05/images05/final_passed_riscv_core.png)
+
+---
+
+### Architecture Verification
+
+![Architecture Verification](./day05/images05/passed_final_diagram.png)
+
+---
 
 ### Waveform Verification
 
-[Insert Waveform Screenshot]
+![Waveform Verification](./day05/images05/final_waveform.png)
 
-### Simulation Results
+---
 
-[Insert Simulation PASSED Screenshot]
+### Simulation Pass Confirmation
 
-### Makerchip Sandbox
+![Simulation Passed](./day05/images05/simulation_passed_log.png)
 
-Sandbox Link: [Insert Makerchip Sandbox Link]
+---
 
 ### Final Outcome
 
-Successfully implemented and verified a pipelined RISC-V CPU featuring:
+Successfully designed, implemented, debugged, verified, and documented a complete pipelined RISC-V CPU.
 
-* Instruction Fetch
-* Instruction Decode
-* Register File
-* Arithmetic Logic Unit (ALU)
-* Control Logic
-* Branch Instructions
-* JAL / JALR Support
-* Pipeline Implementation
-* Load and Store Operations
-* Verification through Simulation and Waveform Analysis
+The processor supports:
 
----
+- Arithmetic Instructions
+- Logical Instructions
+- Branch Instructions
+- Pipeline Execution
+- Hazard Handling
+- Register Operations
+- Memory Access Operations
+- Complete Simulation Verification
+
+This project represents the culmination of the entire workshop journey and demonstrates the transition from understanding software execution to implementing a verified processor architecture.
 
 ## Debugging Diary
 
